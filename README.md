@@ -4,6 +4,9 @@ Proyecto de inteligencia artificial para la **clasificación de riesgo de enferm
 
 ## 🚀 Demo en producción:
 
+🎓 **Proyecto académico - CEMP IA 2025**  
+👩‍💻 _by [aylinn57](https://github.com/aylinn57)_
+
 👉 [https://proyecto-ecv.onrender.com](https://proyecto-ecv.onrender.com)
 
 ## 🛠️ Tecnologías usadas:
@@ -48,13 +51,18 @@ Este proyecto permite que un usuario pueda:
 Todo esto en tiempo real, gracias a un endpoint /predecir_ecv en FastAPI que recibe el JSON del paciente y devuelve la predicción.
 
 ⚙️ Estructura del proyecto:
-app/
-├── main.py                    # API con FastAPI
-├── modelo_ecv_rf.joblib       # Modelo entrenado
-├── templates/
-│   └── formulario_ecv.html    # Formulario web
-requirements.txt               # Dependencias
-README.md                      # Este archivo
+
+proyecto-ecv/
+├── app/
+│ ├── main.py
+│ ├── templates/
+│ │ └── formulario_ecv.html
+│ ├── static/
+│ │ └── logo.png
+│ ├── modelo_ecv_rf.joblib
+│ ├── scaler_ecv.joblib
+├── requirements.txt
+├── README.md
 
 🚀 Cómo desplegar:
 1️⃣ Clona el repo:

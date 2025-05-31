@@ -4,148 +4,154 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Predicción de Enfermedad Cardiovascular (ECV)</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body class="bg-light">
 
-<div class="container py-5">
-    <h1 class="mb-4 text-center">🫀 Predicción de Enfermedad Cardiovascular (ECV)</h1>
+    <!-- LOGO -->
+    <div class="text-center my-4">
+        <img src="/static/logo.png" alt="Aylinn - Masa" width="150">
+    </div>
 
-    <form id="formECV" class="row g-3">
+    <!-- TITULO -->
+    <div class="container">
+        <h1 class="text-center mb-4">Predicción de Enfermedad Cardiovascular (ECV)</h1>
 
-        <!-- Campos del paciente -->
-        <div class="col-md-4">
-            <label for="age" class="form-label">Edad:</label>
-            <input type="number" class="form-control" id="age" required />
+        <!-- FORMULARIO -->
+        <form onsubmit="event.preventDefault(); predecirECV();" class="row g-3">
+            <div class="col-md-4">
+                <label for="age" class="form-label">Edad:</label>
+                <input type="number" class="form-control" id="age" required>
+            </div>
+            <div class="col-md-4">
+                <label for="sex" class="form-label">Sexo (1=Hombre, 0=Mujer):</label>
+                <input type="number" class="form-control" id="sex" required>
+            </div>
+            <div class="col-md-4">
+                <label for="cp" class="form-label">Tipo de dolor en pecho (0-3):</label>
+                <input type="number" class="form-control" id="cp" required>
+            </div>
+            <div class="col-md-4">
+                <label for="trestbps" class="form-label">Presión en reposo:</label>
+                <input type="number" class="form-control" id="trestbps" required>
+            </div>
+            <div class="col-md-4">
+                <label for="chol" class="form-label">Colesterol:</label>
+                <input type="number" class="form-control" id="chol" required>
+            </div>
+            <div class="col-md-4">
+                <label for="fbs" class="form-label">FBS (>120) (1/0):</label>
+                <input type="number" class="form-control" id="fbs" required>
+            </div>
+            <div class="col-md-4">
+                <label for="restecg" class="form-label">ECG:</label>
+                <input type="number" class="form-control" id="restecg" required>
+            </div>
+            <div class="col-md-4">
+                <label for="thalach" class="form-label">Máx ritmo cardíaco:</label>
+                <input type="number" class="form-control" id="thalach" required>
+            </div>
+            <div class="col-md-4">
+                <label for="exang" class="form-label">Angina ejercicio (1/0):</label>
+                <input type="number" class="form-control" id="exang" required>
+            </div>
+            <div class="col-md-4">
+                <label for="oldpeak" class="form-label">Oldpeak:</label>
+                <input type="number" step="0.1" class="form-control" id="oldpeak" required>
+            </div>
+            <div class="col-md-4">
+                <label for="slope" class="form-label">Slope:</label>
+                <input type="number" class="form-control" id="slope" required>
+            </div>
+            <div class="col-md-4">
+                <label for="ca" class="form-label">CA:</label>
+                <input type="number" class="form-control" id="ca" required>
+            </div>
+            <div class="col-md-4">
+                <label for="thal" class="form-label">Thal:</label>
+                <input type="number" class="form-control" id="thal" required>
+            </div>
+
+            <!-- BOTÓN -->
+            <div class="col-12 text-center mt-3">
+                <button type="submit" class="btn btn-primary btn-lg">🔍 Predecir ECV</button>
+            </div>
+        </form>
+
+        <!-- RESULTADO -->
+        <div id="resultado" class="mt-4 d-none"></div>
+
+    </div>
+
+     <!-- DESCRIPCIÓN DE VARIABLES -->
+        <div class="alert alert-info">
+            <h4>📋 Descripción de las variables</h4>
+            <ul>
+                <li><strong>Edad:</strong> Edad del paciente</li>
+                <li><strong>Sexo:</strong> Género (1 = Hombre, 0 = Mujer)</li>
+                <li><strong>Tipo de dolor en el pecho (cp):</strong> 0-3</li>
+                <li><strong>Presión en reposo:</strong> Presión arterial en reposo (mm Hg)</li>
+                <li><strong>Colesterol:</strong> Colesterol sérico (mg/dl)</li>
+                <li><strong>FBS:</strong> Azúcar en sangre en ayunas (>120 mg/dl) (1 = Sí, 0 = No)</li>
+                <li><strong>ECG:</strong> Resultados del ECG en reposo (0-2)</li>
+                <li><strong>Máx ritmo cardíaco:</strong> Frecuencia cardíaca máxima alcanzada</li>
+                <li><strong>Angina ejercicio:</strong> Angina inducida por ejercicio (1 = Sí, 0 = No)</li>
+                <li><strong>Oldpeak:</strong> Depresión del ST inducida por el ejercicio</li>
+                <li><strong>Slope:</strong> Pendiente del segmento ST durante el ejercicio</li>
+                <li><strong>CA:</strong> Número de vasos principales coloreados (0-3)</li>
+                <li><strong>Thal:</strong> Resultado de la prueba de talio (3, 6, 7)</li>
+            </ul>
         </div>
 
-        <div class="col-md-4">
-            <label for="sex" class="form-label">Sexo (1=Hombre, 0=Mujer):</label>
-            <input type="number" class="form-control" id="sex" required />
-        </div>
 
-        <div class="col-md-4">
-            <label for="cp" class="form-label">Tipo de dolor en pecho (0-3):</label>
-            <input type="number" class="form-control" id="cp" required />
-        </div>
+    <!-- SCRIPT API -->
+    <script>
+        function predecirECV() {
+            const paciente = {
+                age: parseFloat(document.getElementById("age").value),
+                sex: parseInt(document.getElementById("sex").value),
+                cp: parseInt(document.getElementById("cp").value),
+                trestbps: parseFloat(document.getElementById("trestbps").value),
+                chol: parseFloat(document.getElementById("chol").value),
+                fbs: parseInt(document.getElementById("fbs").value),
+                restecg: parseInt(document.getElementById("restecg").value),
+                thalach: parseFloat(document.getElementById("thalach").value),
+                exang: parseInt(document.getElementById("exang").value),
+                oldpeak: parseFloat(document.getElementById("oldpeak").value),
+                slope: parseInt(document.getElementById("slope").value),
+                ca: parseInt(document.getElementById("ca").value),
+                thal: parseInt(document.getElementById("thal").value)
+            };
 
-        <div class="col-md-4">
-            <label for="trestbps" class="form-label">Presión en reposo:</label>
-            <input type="number" class="form-control" id="trestbps" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="chol" class="form-label">Colesterol:</label>
-            <input type="number" class="form-control" id="chol" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="fbs" class="form-label">FBS (>120) (1/0):</label>
-            <input type="number" class="form-control" id="fbs" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="restecg" class="form-label">ECG:</label>
-            <input type="number" class="form-control" id="restecg" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="thalach" class="form-label">Máx ritmo cardíaco:</label>
-            <input type="number" class="form-control" id="thalach" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="exang" class="form-label">Angina ejercicio (1/0):</label>
-            <input type="number" class="form-control" id="exang" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="oldpeak" class="form-label">Oldpeak:</label>
-            <input type="number" step="0.1" class="form-control" id="oldpeak" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="slope" class="form-label">Slope:</label>
-            <input type="number" class="form-control" id="slope" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="ca" class="form-label">CA:</label>
-            <input type="number" class="form-control" id="ca" required />
-        </div>
-
-        <div class="col-md-4">
-            <label for="thal" class="form-label">Thal:</label>
-            <input type="number" class="form-control" id="thal" required />
-        </div>
-
-        <!-- Botón -->
-        <div class="col-12 mt-4 text-center">
-            <button type="button" class="btn btn-primary btn-lg" onclick="predecirECV()">🔍 Predecir ECV</button>
-        </div>
-
-    </form>
-
-    <!-- Resultado -->
-    <div id="resultado" class="alert mt-4 d-none"></div>
-
-</div>
-
-<!-- Script para consumir la API -->
-<script>
-    function predecirECV() {
-        const paciente = {
-            age: parseFloat(document.getElementById("age").value),
-            sex: parseInt(document.getElementById("sex").value),
-            cp: parseInt(document.getElementById("cp").value),
-            trestbps: parseFloat(document.getElementById("trestbps").value),
-            chol: parseFloat(document.getElementById("chol").value),
-            fbs: parseInt(document.getElementById("fbs").value),
-            restecg: parseInt(document.getElementById("restecg").value),
-            thalach: parseFloat(document.getElementById("thalach").value),
-            exang: parseInt(document.getElementById("exang").value),
-            oldpeak: parseFloat(document.getElementById("oldpeak").value),
-            slope: parseInt(document.getElementById("slope").value),
-            ca: parseInt(document.getElementById("ca").value),
-            thal: parseInt(document.getElementById("thal").value)
-        };
-
-        fetch("https://proyecto-ecv.onrender.com/predecir_ecv", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(paciente)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Respuesta API:", data);
-
-            const divResultado = document.getElementById("resultado");
-
-            divResultado.innerHTML = `
-                <h4>Resultado: ${data.resultado}</h4>
-                <p><strong>Probabilidad de riesgo:</strong> ${data.probabilidad}</p>
-            `;
-
-            if (data.resultado.includes("Positivo")) {
-                divResultado.className = "alert alert-danger";
-            } else {
-                divResultado.className = "alert alert-success";
-            }
-
-            divResultado.classList.remove("d-none");
-        })
-        .catch(error => {
-            console.error("Error al llamar la API:", error);
-            const divResultado = document.getElementById("resultado");
-            divResultado.innerHTML = `<strong>❌ Error al llamar la API</strong>`;
-            divResultado.className = "alert alert-warning";
-            divResultado.classList.remove("d-none");
-        });
-    }
-</script>
+            fetch("https://proyecto-ecv.onrender.com/predecir_ecv", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(paciente)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Respuesta API:", data);
+                const divResultado = document.getElementById("resultado");
+                divResultado.innerHTML = `
+                    <h4>Resultado: ${data.resultado}</h4>
+                    <p><strong>Probabilidad de riesgo:</strong> ${data.probabilidad}</p>
+                `;
+                if (data.resultado.includes("Positivo")) {
+                    divResultado.className = "alert alert-danger";
+                } else {
+                    divResultado.className = "alert alert-success";
+                }
+                divResultado.classList.remove("d-none");
+            })
+            .catch(error => {
+                console.error("Error al llamar la API:", error);
+                const divResultado = document.getElementById("resultado");
+                divResultado.innerHTML = `<strong>❌ Error al llamar la API</strong>`;
+                divResultado.className = "alert alert-warning";
+                divResultado.classList.remove("d-none");
+            });
+        }
+    </script>
 
 </body>
 </html>
