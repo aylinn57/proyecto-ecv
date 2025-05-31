@@ -1,8 +1,9 @@
+# app/main.py
+
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware   # <--- AGREGA ESTA LÍNEA
 from pydantic import BaseModel
 import joblib
 import numpy as np
@@ -10,10 +11,10 @@ import os
 
 app = FastAPI()
 
-# HABILITAR CORS
+# Agregar middleware de CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # Puedes cambiar "*" por ["https://proyecto-ecv.onrender.com"]
+    allow_origins=["*"],  # puedes restringirlo luego si quieres
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,7 +24,7 @@ app.add_middleware(
 modelo = joblib.load(os.path.join(os.path.dirname(__file__), "modelo_ecv_rf.joblib"))
 scaler = joblib.load(os.path.join(os.path.dirname(__file__), "scaler_ecv.joblib"))
 
-# Servir templates (HTML)
+# Servir templates
 templates = Jinja2Templates(directory="app/templates")
 
 # MODELO DE DATOS
@@ -42,7 +43,7 @@ class Paciente(BaseModel):
     ca: float
     thal: float
 
-# RUTA RAÍZ → muestra el HTML
+# RUTA HTML
 @app.get("/", response_class=HTMLResponse)
 async def formulario(request: Request):
     return templates.TemplateResponse("formulario_ecv.html", {"request": request})
