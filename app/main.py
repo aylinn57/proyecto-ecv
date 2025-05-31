@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import joblib
@@ -24,6 +25,9 @@ modelo = joblib.load(os.path.join(os.path.dirname(__file__), "modelo_ecv_rf.jobl
 
 # Servir templates
 templates = Jinja2Templates(directory="app/templates")
+
+# Montar carpeta static (para logo, imágenes, etc.)
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # MODELO DE DATOS
 class Paciente(BaseModel):
