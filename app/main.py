@@ -1,14 +1,23 @@
-# app/main.py
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware   # <--- AGREGA ESTA LÍNEA
 from pydantic import BaseModel
 import joblib
 import numpy as np
 import os
 
 app = FastAPI()
+
+# HABILITAR CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # Puedes cambiar "*" por ["https://proyecto-ecv.onrender.com"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Cargar modelo y scaler
 modelo = joblib.load(os.path.join(os.path.dirname(__file__), "modelo_ecv_rf.joblib"))
