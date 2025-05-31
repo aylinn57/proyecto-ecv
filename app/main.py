@@ -12,7 +12,7 @@ app = FastAPI()
 
 # Cargar modelo y scaler
 modelo = joblib.load(os.path.join(os.path.dirname(__file__), "modelo_ecv_rf.joblib"))
-scaler = joblib.load(os.path.join(os.path.dirname(__file__), "scaler.joblib"))
+scaler = joblib.load(os.path.join(os.path.dirname(__file__), "scaler_ecv.joblib"))
 
 # Servir templates (HTML)
 templates = Jinja2Templates(directory="app/templates")
