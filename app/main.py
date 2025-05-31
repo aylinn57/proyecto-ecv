@@ -1,8 +1,7 @@
 # app/main.py
-
 from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import joblib
@@ -11,18 +10,17 @@ import os
 
 app = FastAPI()
 
-# Agregar middleware de CORS
+# Agregar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # puedes restringirlo luego si quieres
+    allow_origins=["*"],  # Puedes restringir a tu dominio si quieres más adelante
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Cargar modelo y scaler
+# Cargar modelo (RandomForest NO requiere scaler)
 modelo = joblib.load(os.path.join(os.path.dirname(__file__), "modelo_ecv_rf.joblib"))
-scaler = joblib.load(os.path.join(os.path.dirname(__file__), "scaler_ecv.joblib"))
 
 # Servir templates
 templates = Jinja2Templates(directory="app/templates")
@@ -43,7 +41,7 @@ class Paciente(BaseModel):
     ca: float
     thal: float
 
-# RUTA HTML
+# RUTA RAÍZ → muestra el HTML
 @app.get("/", response_class=HTMLResponse)
 async def formulario(request: Request):
     return templates.TemplateResponse("formulario_ecv.html", {"request": request})
@@ -56,9 +54,9 @@ async def predecir_ecv(paciente: Paciente):
                        paciente.exang, paciente.oldpeak, paciente.slope,
                        paciente.ca, paciente.thal]])
     
-    X_scaled = scaler.transform(X_new)
-    proba = modelo.predict_proba(X_scaled)[0][1]
-    prediccion = modelo.predict(X_scaled)[0]
+    # SIN SCALER
+    proba = modelo.predict_proba(X_new)[0][1]
+    prediccion = modelo.predict(X_new)[0]
     
     resultado = "Positivo: Alto riesgo de ECV" if prediccion == 1 else "Negativo: Sin ECV"
     
